@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="MLBB Hub — a collection of tools for Mobile Legends: Bang Bang players. COA simulator, build maker, skin checker, draft helper and more.">
+<meta property="og:title" content="MLBB Hub — Tools for Mobile Legends Players">
+<meta property="og:description" content="A growing collection of free tools for MLBB players. Plan your events, build your heroes, check skins, and more.">
+<meta property="og:image" content="./Assets/preview.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MLBB Hub">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MLBB Hub — Tools for Mobile Legends Players">
+<meta name="twitter:description" content="A growing collection of free tools for MLBB players.">
+<meta name="twitter:image" content="./Assets/preview.png">
+<title>MLBB Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<style>
+
+/* ── PAGE LAYOUT ── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+main { flex: 1; }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 24px 72px;
+  text-align: center;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(48,213,245,.10) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 60%,  rgba(91,158,245,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 20% 70%,  rgba(168,85,247,.06) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: .18;
+  mask-image: radial-gradient(ellipse 70% 100% at 50% 0%, black 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 100% at 50% 0%, black 0%, transparent 80%);
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--coa);
+  background: rgba(48,213,245,.08);
+  border: 1px solid rgba(48,213,245,.2);
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin-bottom: 24px;
+  user-select: none;
+  animation: fadeUp .5s ease both;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 20px;
+  animation: fadeUp .5s .1s ease both;
+}
+.hero-title .accent { color: var(--coa); }
+.hero-title .accent-gold { color: var(--gold); }
+.hero-sub {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0 auto 36px;
+  animation: fadeUp .5s .2s ease both;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--coa), var(--coa2));
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: #0d0f14;
+  text-decoration: none;
+  transition: opacity .15s, transform .15s;
+  animation: fadeUp .5s .3s ease both;
+  user-select: none;
+}
+.hero-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── SECTION ── */
+.section {
+  padding: 64px 24px;
+}
+.section-header {
+  max-width: 1200px;
+  margin: 0 auto 36px;
+  display: flex; align-items: baseline; gap: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--text);
+  user-select: none;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.section-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  user-select: none;
+}
+
+/* ── TOOL GRID ── */
+.tool-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.tool-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+.tool-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--card-accent, var(--border));
+  opacity: 0;
+  transition: opacity .2s;
+}
+.tool-card:hover {
+  border-color: var(--card-accent, var(--border));
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.4);
+}
+.tool-card:hover::before { opacity: 1; }
+.tool-card.disabled {
+  opacity: .55;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tool-card-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.tool-card-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--card-icon-bg, var(--s3));
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.tool-card-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--text);
+  margin-bottom: 6px;
+  user-select: none;
+}
+.tool-card-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+  margin-bottom: 20px;
+}
+.tool-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: auto;
+}
+.tool-card-tags {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+.tool-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  user-select: none;
+}
+.tool-card-arrow {
+  font-size: 1rem;
+  color: var(--muted);
+  transition: color .2s, transform .2s;
+  user-select: none;
+}
+.tool-card:hover .tool-card-arrow {
+  color: var(--card-accent, var(--coa));
+  transform: translateX(3px);
+}
+
+/* ── STATS STRIP ── */
+.stats-strip {
+  background: var(--s1);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 24px;
+}
+.stats-strip-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+}
+.stat-item {
+  flex: 1; min-width: 150px;
+  text-align: center;
+  padding: 12px 24px;
+  border-right: 1px solid var(--border);
+  user-select: none;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item-val {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--coa);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-item-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero { padding: 56px 16px 48px; }
+  .section { padding: 48px 16px; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-item:last-child { border-bottom: none; }
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="hub-header">
+    <a class="hub-logo" href="./index.html">
+      <div class="hub-logo-icon">⚔️</div>
+      <span class="hub-logo-name">MLBB<span>Hub</span></span>
+    </a>
+    <nav class="hub-nav">
+      <a class="hub-nav-link active" href="./index.html"><span class="label">Home</span></a>
+      <a class="hub-nav-link" href="./coa/index.html"><span class="label">COA Simulator</span></a>
+      <a class="hub-nav-link" href="#"><span class="label">Build & Emblem</span> <span class="hub-nav-badge">Soon</span></a>
+      <a class="hub-nav-link" href="#"><span class="label">Skin Checker</span> <span class="hub-nav-badge">Soon</span></a>
+      <a class="hub-nav-link" href="#"><span class="label">Draft</span> <span class="hub-nav-badge">Soon</span></a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-inner">
+        <div class="hero-eyebrow">✦ Mobile Legends: Bang Bang</div>
+        <h1 class="hero-title">
+          Tools for<br>
+          <span class="accent">Smarter</span> <span class="accent-gold">Gameplay</span>
+        </h1>
+        <p class="hero-sub">Plan events, build heroes, check skins, and prepare drafts — all in one place.</p>
+        <a class="hero-cta" href="./coa/index.html">Open COA Simulator →</a>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <div class="stats-strip">
+      <div class="stats-strip-inner">
+        <div class="stat-item">
+          <div class="stat-item-val">1</div>
+          <div class="stat-item-label">Live Tool</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item-val">4</div>
+          <div class="stat-item-label">Coming Soon</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item-val">Free</div>
+          <div class="stat-item-label">Always</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item-val">0</div>
+          <div class="stat-item-label">Ads</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">All Tools</h2>
+        <div class="section-line"></div>
+        <span class="section-count">5 tools</span>
+      </div>
+
+      <div class="tool-grid">
+
+        <!-- COA SIMULATOR — LIVE -->
+        <a class="tool-card" href="./coa/index.html"
+           style="--card-accent: var(--coa); --card-icon-bg: rgba(48,213,245,.08);">
+          <div class="tool-card-head">
+            <div class="tool-card-icon">💎</div>
+            <span class="tool-badge live">Live</span>
+          </div>
+          <div class="tool-card-name">COA Simulator</div>
+          <p class="tool-card-desc">Plan your Exquisite Collection event day-by-day. Calculate the minimum diamonds needed to reach your target skin.</p>
+          <div class="tool-card-footer">
+            <div class="tool-card-tags">
+              <span class="tool-tag">Event</span>
+              <span class="tool-tag">Diamonds</span>
+              <span class="tool-tag">Recharge</span>
+            </div>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- BUILD & EMBLEM — SOON -->
+        <div class="tool-card disabled"
+             style="--card-accent: var(--gold); --card-icon-bg: rgba(245,196,48,.08);">
+          <div class="tool-card-head">
+            <div class="tool-card-icon">⚔️</div>
+            <span class="tool-badge soon">Soon</span>
+          </div>
+          <div class="tool-card-name">Build & Emblem Maker</div>
+          <p class="tool-card-desc">Build optimized item sets and configure emblem trees for any hero. Export and share your builds.</p>
+          <div class="tool-card-footer">
+            <div class="tool-card-tags">
+              <span class="tool-tag">Heroes</span>
+              <span class="tool-tag">Items</span>
+              <span class="tool-tag">Emblems</span>
+            </div>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- SKIN CHECKER — SOON -->
+        <div class="tool-card disabled"
+           style="--card-accent: var(--purple); --card-icon-bg: rgba(168,85,247,.08);">
+          <div class="tool-card-head">
+            <div class="tool-card-icon">🎨</div>
+            <span class="tool-badge soon">Soon</span>
+          </div>
+          <div class="tool-card-name">Skin Checker</div>
+          <p class="tool-card-desc">Browse and check skin availability, rarities, and how to obtain them. Never miss a limited skin again.</p>
+          <div class="tool-card-footer">
+            <div class="tool-card-tags">
+              <span class="tool-tag">Skins</span>
+              <span class="tool-tag">Collection</span>
+            </div>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- DRAFT MAKER — SOON -->
+        <div class="tool-card disabled"
+           style="--card-accent: var(--red); --card-icon-bg: rgba(245,81,81,.08);">
+          <div class="tool-card-head">
+            <div class="tool-card-icon">📋</div>
+            <span class="tool-badge soon">Soon</span>
+          </div>
+          <div class="tool-card-name">Draft Maker</div>
+          <p class="tool-card-desc">Simulate pick and ban phases for ranked and tournament play. Plan team compositions and counter-picks.</p>
+          <div class="tool-card-footer">
+            <div class="tool-card-tags">
+              <span class="tool-tag">Draft</span>
+              <span class="tool-tag">Meta</span>
+              <span class="tool-tag">Ranked</span>
+            </div>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- RECHARGE CALC — SOON -->
+        <div class="tool-card disabled"
+           style="--card-accent: var(--dia); --card-icon-bg: rgba(91,158,245,.08);">
+          <div class="tool-card-head">
+            <div class="tool-card-icon">💰</div>
+            <span class="tool-badge soon">Soon</span>
+          </div>
+          <div class="tool-card-name">Recharge Calculator</div>
+          <p class="tool-card-desc">Find the cheapest way to top up diamonds for your region. Compare packages and get the best value.</p>
+          <div class="tool-card-footer">
+            <div class="tool-card-tags">
+              <span class="tool-tag">Diamonds</span>
+              <span class="tool-tag">Top-up</span>
+            </div>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="hub-footer">
+    <div class="hub-footer-inner">
+      <div>
+        <div class="hub-footer-brand">MLBB<span>Hub</span></div>
+        <div class="hub-footer-copy">Made by Amane &nbsp;·&nbsp; © 2026</div>
+      </div>
+      <div class="hub-footer-disclaimer">
+        Not affiliated with or endorsed by Moonton or Mobile Legends: Bang Bang.
+      </div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
